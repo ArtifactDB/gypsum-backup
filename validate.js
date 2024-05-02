@@ -43,7 +43,6 @@ for (const [key, manifest] of Object.entries(all_manifests)) {
             }
 
             const finfo = fs.statSync(full);
-            console.log(finfo.size, info.size);
             if (finfo.size != info.size) {
                 console.log(`${target}\tmismatch in size`);
                 continue;
@@ -62,12 +61,12 @@ for (const [key, manifest] of Object.entries(all_manifests)) {
 
         } else {
             const link_dest = info.link.project + "/" + info.link.asset + "/" + info.link.version;
-            if (!(link_dest in manifest)) {
+            if (!(link_dest in all_manifests)) {
                 console.log(`${target}\tlink target does not exist`);
                 continue;
             }
 
-            const link_manifest = manifest[link_dest];
+            const link_manifest = all_manifests[link_dest];
             if (!(info.link.path in link_manifest)) {
                 console.log(`${target}\tlink target does not exist`);
                 continue;

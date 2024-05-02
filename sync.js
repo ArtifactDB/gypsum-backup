@@ -49,34 +49,37 @@ if (fs.existsSync(backup_dir)) {
 // Make a local copy of the latest backup so that the aws sync has less work to do, hopefully.
 const backup_now = now.toISOString().split('T')[0]
 const backup_dest = path.join(backup_dir, backup_now);
-const backup_tmp = backup_dest + "_tmp";
 
-if (!fs.existsSync(backup_tmp) && backup_latest) {
-    if (all_backups.length > 0) {
-        fs.cpSync(path.join(backup_dir, backup_last), backup_tmp, { recursive: true });
+if (!fs.existsSync(backup_dest)) {
+    const backup_tmp = backup_dest + "_tmp";
+
+    if (!fs.existsSync(backup_tmp) && backup_latest) {
+        if (all_backups.length > 0) {
+            fs.cpSync(path.join(backup_dir, backup_last), backup_tmp, { recursive: true });
+        }
     }
-}
 
-// Syncing the bucket to a temporary directory.
-const cred_res = await fetch("https://gypsum.artifactdb.com/credentials/s3-api");
-if (!cred_res.ok) {
-    throw new Error("failed to fetch S3 credentials");
-}
-const credentials = await cred_res.json();
-
-const client = new S3Client({
-    region: "auto",
-    endpoint: credentials.endpoint,
-    credentials: {
-        accessKeyId: credentials.key,
-        secretAccessKey: credentials.secret
+    // Syncing the bucket to a temporary directory.
+    const cred_res = await fetch("https://gypsum.artifactdb.com/credentials/s3-api");
+    if (!cred_res.ok) {
+        throw new Error("failed to fetch S3 credentials");
     }
-});
-const { sync } = new S3SyncClient({ client: client });
-await sync("s3://" + credentials.bucket, backup_tmp, { del: true });
+    const credentials = await cred_res.json();
 
-// Renaming the directory to its intended location and mopping up.
-fs.renameSync(backup_tmp, backup_dest);
-if (purge_backup_latest) {
-    fs.rmSync(path.join(backup_dir, backup_latest), { recursive: true, force: true })
+    const client = new S3Client({
+        region: "auto",
+        endpoint: credentials.endpoint,
+        credentials: {
+            accessKeyId: credentials.key,
+            secretAccessKey: credentials.secret
+        }
+    });
+    const { sync } = new S3SyncClient({ client: client });
+    await sync("s3://" + credentials.bucket, backup_tmp, { del: true });
+
+    // Renaming the directory to its intended location and mopping up.
+    fs.renameSync(backup_tmp, backup_dest);
+    if (purge_backup_latest) {
+        fs.rmSync(path.join(backup_dir, backup_latest), { recursive: true, force: true })
+    }
 }
