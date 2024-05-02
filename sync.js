@@ -21,7 +21,7 @@ if (fs.existsSync(backup_dir)) {
     for (const b of all_backups) {
         const age = new Date(b);
         const act = { name: b, purge: true }
-        if (!Number.isNaN(age.getTime()) {
+        if (!Number.isNaN(age.getTime())) {
             if (now.getTime() - age.getTime() < expiry_ms) {
                 act.purge = false;
             }
