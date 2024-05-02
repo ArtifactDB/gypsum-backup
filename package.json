@@ -1,0 +1,13 @@
+{
+  "private": true,
+  "name": "gypsum-backup",
+  "description": "Local backups of the gypsum data.",
+  "version": "1.0.0",
+  "type": "module",
+  "author": "LTLA <infinite.monkeys.with.keyboards@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.567.0",
+    "s3-sync-client": "^4.3.1"
+  }
+}
