@@ -43,7 +43,6 @@ for (const [key, manifest] of Object.entries(all_manifests)) {
             }
 
             const finfo = fs.statSync(full);
-            console.log(finfo.size, info.size);
             if (finfo.size != info.size) {
                 console.log(`${target}\tmismatch in size`);
                 continue;
@@ -62,12 +61,12 @@ for (const [key, manifest] of Object.entries(all_manifests)) {
 
         } else {
             const link_dest = info.link.project + "/" + info.link.asset + "/" + info.link.version;
-            if (!(link_dest in manifest)) {
+            if (!(link_dest in all_manifests)) {
                 console.log(`${target}\tlink target does not exist`);
                 continue;
             }
 
-            const link_manifest = manifest[link_dest];
+            const link_manifest = all_manifests[link_dest];
             if (!(info.link.path in link_manifest)) {
                 console.log(`${target}\tlink target does not exist`);
                 continue;
@@ -87,12 +86,12 @@ for (const [key, manifest] of Object.entries(all_manifests)) {
             if ("ancestor" in info.link) {
                 let expected_path;
                 let expected_dest;
-                if ("ancestor" in link_info) {
-                    expected_dest = link_info.ancestor.project + "/" + link_info.ancestor.asset + "/" + link_info.ancestor.version;
-                    expected_path = link_info.ancestor.path;
+                if ("ancestor" in link_info.link) {
+                    expected_dest = link_info.link.ancestor.project + "/" + link_info.link.ancestor.asset + "/" + link_info.link.ancestor.version;
+                    expected_path = link_info.link.ancestor.path;
                 } else {
-                    expected_dest = link_info.project + "/" + link_info.asset + "/" + link_info.version;
-                    expected_path = link_info.path;
+                    expected_dest = link_info.link.project + "/" + link_info.link.asset + "/" + link_info.link.version;
+                    expected_path = link_info.link.path;
                 }
 
                 const ancestor_dest = info.link.ancestor.project + "/" + info.link.ancestor.asset + "/" + info.link.ancestor.version;
@@ -101,12 +100,12 @@ for (const [key, manifest] of Object.entries(all_manifests)) {
                     continue;
                 }
 
-                if (!(ancestor_dest in manifest)) {
+                if (!(ancestor_dest in all_manifests)) {
                     console.log(`${target}\tlink ancestor target does not exist`);
                     continue;
                 }
 
-                const ancestor_manifest = manifest[ancestor_dest];
+                const ancestor_manifest = all_manifests[ancestor_dest];
                 if (!(info.link.ancestor.path in ancestor_manifest)) {
                     console.log(`${target}\tlink ancestor target does not exist`);
                     continue;
