@@ -54,9 +54,7 @@ if (!fs.existsSync(backup_dest)) {
     const backup_tmp = backup_dest + "_tmp";
 
     if (!fs.existsSync(backup_tmp) && backup_latest) {
-        if (all_backups.length > 0) {
-            fs.cpSync(path.join(backup_dir, backup_last), backup_tmp, { recursive: true });
-        }
+        fs.cpSync(path.join(backup_dir, backup_latest), backup_tmp, { recursive: true });
     }
 
     // Syncing the bucket to a temporary directory.
