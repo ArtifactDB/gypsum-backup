@@ -2,7 +2,8 @@ import * as fs from "fs";
 import * as path from "path";
 import * as crypto from "crypto";
 
-const dir = "backups/2024-05-02";
+const args = process.argv;
+const dir = args[2];
 
 // Parsing all manifests for link resolution.
 const all_manifests = {};
